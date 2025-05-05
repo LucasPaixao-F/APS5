@@ -89,7 +89,7 @@ for noticia in novas_noticias[0]:
 contagem_classes = pd.Series(resultados).value_counts()
 
 plt.figure(figsize=(8, 6))
-contagem_classes.plot(kind="bar", color=["green", "red", "gray"])
+contagem_classes.plot(kind="bar", color=["red", "green", "gray"])
 plt.title("Classificação das Novas Notícias")
 plt.xlabel("Classificação")
 plt.ylabel("Quantidade")

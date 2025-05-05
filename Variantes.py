@@ -19,34 +19,27 @@ from imblearn.over_sampling import RandomOverSampler
 from time import time
 import matplotlib.pyplot as plt
 
-# Baixando stopwords
 nltk.download("stopwords")
 stopwords_pt = stopwords.words("portuguese")
 
-# Lendo o dataset
 url = "C:/Users/Lucas Paixao/Documents/periodo 5/APS/noticias_queimadas.csv"
 df = pd.read_csv(url, encoding="latin1")
 df.columns = ["Noticia", "Classe"]
 
-# Vetorização TF-IDF
 vectorizer = TfidfVectorizer(stop_words=stopwords_pt)
 X = vectorizer.fit_transform(df["Noticia"])
 y = df["Classe"]
 
-# Balanceamento com oversampling
 ros = RandomOverSampler(random_state=42)
 X_resampled, y_resampled = ros.fit_resample(X, y)
 
-# Divisão em treino e teste
 x_train, x_test, y_train, y_test = train_test_split(
     X_resampled, y_resampled, test_size=0.3, random_state=42
 )
 
-# Conversão para array denso para modelos que não aceitam esparsos
 x_train_dense = x_train.toarray()
 x_test_dense = x_test.toarray()
 
-# Lista de modelos
 modelos = [
     ("QDA", QuadraticDiscriminantAnalysis()),
     ("LDA", LinearDiscriminantAnalysis()),
@@ -60,7 +53,6 @@ modelos = [
     ("MLP", MLPClassifier(hidden_layer_sizes=(100,), max_iter=300, random_state=42)),
 ]
 
-# Função de avaliação e coleta dos resultados
 resultados = []
 
 
@@ -109,7 +101,6 @@ resultados_ordenados = sorted(resultados, key=lambda x: x["Acurácia"], reverse=
 modelos_nome = [r["Modelo"] for r in resultados_ordenados]
 acuracias = [r["Acurácia"] for r in resultados_ordenados]
 
-# Plot
 fig, ax = plt.subplots(figsize=(12, 6))
 bars = ax.bar(modelos_nome, acuracias, color="skyblue")
 
@@ -119,7 +110,6 @@ ax.set_ylabel("Acurácia")
 
 plt.xticks(rotation=45, ha="right")
 
-# Adicionar o valor em cima de cada barra
 for bar, acc in zip(bars, acuracias):
     height = bar.get_height()
     ax.text(

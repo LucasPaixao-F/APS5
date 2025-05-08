@@ -18,6 +18,7 @@ from sklearn.neural_network import MLPClassifier
 from imblearn.over_sampling import RandomOverSampler
 from time import time
 import matplotlib.pyplot as plt
+import numpy as np
 
 nltk.download("stopwords")
 stopwords_pt = stopwords.words("portuguese")
@@ -126,6 +127,59 @@ for bar, acc in zip(bars, acuracias):
 plt.tight_layout()
 plt.show()
 
+import numpy as np
+
+modelos_nome = [r["Modelo"] for r in resultados_ordenados]
+tempos_treinamento = [r["Tempo de Treinamento (ms)"] for r in resultados_ordenados]
+tempos_previsao = [r["Tempo de Previsão (ms)"] for r in resultados_ordenados]
+
+x = np.arange(len(modelos_nome))  # posições no eixo x
+largura_barra = 0.25
+
+fig, ax = plt.subplots(figsize=(14, 6))
+
+b2 = ax.bar(
+    x,
+    tempos_treinamento,
+    width=largura_barra,
+    label="Treinamento (ms)",
+    color="lightgreen",
+)
+b3 = ax.bar(
+    x + largura_barra,
+    tempos_previsao,
+    width=largura_barra,
+    label="Previsão (ms)",
+    color="salmon",
+)
+
+ax.set_title("Comparação de Modelos - Tempo de Treinamento e Previsão", fontsize=14)
+ax.set_xlabel("Modelos", fontsize=12)
+ax.set_ylabel("Valores", fontsize=12)
+ax.set_xticks(x)
+ax.set_xticklabels(modelos_nome, rotation=45, ha="right")
+ax.legend()
+
+
+def adicionar_valores(barras, formato=".2f"):
+    for bar in barras:
+        height = bar.get_height()
+        ax.annotate(
+            f"{height:{formato}}",
+            xy=(bar.get_x() + bar.get_width() / 2, height),
+            xytext=(0, 3),  # deslocamento
+            textcoords="offset points",
+            ha="center",
+            va="bottom",
+            fontsize=8,
+        )
+
+
+adicionar_valores(b2, formato=".0f")
+adicionar_valores(b3, formato=".0f")
+
+plt.tight_layout()
+plt.show()
+
 df_resultados = pd.DataFrame(resultados)
 df_resultados.to_csv("resultados_modelos.csv", index=False)
-print("\n✅ Resultados salvos em 'resultados_modelos.csv'")
